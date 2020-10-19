@@ -1,8 +1,9 @@
+using BlazingShop.Data;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BlazingShop.Data
+namespace BlazingShop.Services
 {
     public class WeatherForecastService
     {
