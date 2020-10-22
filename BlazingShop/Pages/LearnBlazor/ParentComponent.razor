@@ -1,0 +1,27 @@
+﻿@page "/ParentComponent"
+
+<h3>ParentComponent</h3>
+<p class="text-danger">Parent-Child Component</p>
+<div class="card ml-sm-5">
+    <BlazingShop.Pages.Components.ChildComponent                                                
+       OnClickMethod="ShowMessage"
+       Title="Child Title"> 
+        This text is written in between ChildComponent tags.
+    </BlazingShop.Pages.Components.ChildComponent>
+</div>
+
+<p>
+    <b>
+        @messageText
+    </b>
+</p>
+
+@code {
+    public string messageText = "Vanilla parent text.";
+
+    private void ShowMessage(MouseEventArgs mouseEvent)
+    {
+        messageText = "Text triggered from child component callback!";
+        messageText += $"{mouseEvent.Button}";
+    }
+}

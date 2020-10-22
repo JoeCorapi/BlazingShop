@@ -11,7 +11,7 @@ namespace BlazingShop.Pages.LearnBlazor
         protected string name;
         protected string WelcomeText = "Time to learn Blazor!";
 
-        protected void getName()
+        protected void GetName()
         {
             name = "Blazor Learner";
         }
