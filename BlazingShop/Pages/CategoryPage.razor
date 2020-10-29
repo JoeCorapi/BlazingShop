@@ -1,0 +1,150 @@
+﻿@page "/category"
+@using BlazingShop.Data
+@using BlazingShop.Services
+
+@inherits OwningComponentBase<CategoryService>
+
+@if (categories == null)
+{
+    <p><em>Loading or no categories exist</em></p>
+}
+else
+{
+    <div class="container border p-3">
+        <div class="row">
+            <div class="col-5">
+                <h3 class="text-info">Category List</h3>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-info form-control" @onclick="AddNewCategory">
+                    Add Category
+                </button>
+            </div>
+        </div>
+        <div class="row pt-4">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Category Name</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Category cat in categories)
+                    {
+                        <tr>
+                            <td>@cat.Name</td>
+                            <td>
+                                <button class="btn btn-primary" style="width:150px" @onclick="(()=> EditCategory(cat))" >
+                                    Edit
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@if (ShowPopup)
+{
+    <div class="modal" tabindex="-1" style="display:block" role="dialog">
+        <EditForm Model="@categoryObj" OnValidSubmit="@ValidSubmit">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="text-info">@(categoryObj.Id !=0 ? "Update" : "Create") Category</h3>
+                        <button type="button" class="close" @onclick="ClosePopup">
+                            <span aria-hidden="true">X</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <DataAnnotationsValidator/>
+                        <ValidationSummary/>
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="row py-2">
+                                    <div class="col-4">
+                                        Category Name
+                                    </div>
+                                    <div class="col-8">
+                                        <input class="form-control" type="text" @bind="categoryObj.Name" />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+
+                                    <div class="offset-4 col">
+                                        <button class="btn btn-primary form-control" type="submit">Submit</button>
+                                    </div>
+                                    @if (categoryObj.Id > 0)
+                                    {
+                                        <div class="col">
+                                            <button class="btn btn-danger form-control"
+                                                    type="submit"
+                                                    @onclick="DeleteCategory">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+}
+
+
+@code {
+    private List<Category> categories;
+    private Category categoryObj = new Category();
+    bool ShowPopup = false;
+
+    protected override void OnInitialized()
+    {
+        categories = Service.GetCategories();
+    }
+
+    void AddNewCategory()
+    {
+        categoryObj = new Category();
+        categoryObj.Id = 0;
+        ShowPopup = true;
+    }
+
+    void EditCategory(Category category)
+    {
+        categoryObj = category;
+        ShowPopup = true;
+    }
+
+    void DeleteCategory()
+    {
+        Service.DeleteCategory(categoryObj);
+    }
+
+    void ClosePopup()
+    {
+        ShowPopup = false;
+    }
+
+    void ValidSubmit()
+    {
+        var result = false;
+        ShowPopup = false;
+
+        if (categoryObj.Id != 0)
+        {
+            result = Service.UpdateCategory(categoryObj);
+        }
+        else
+        {
+            result = Service.CreateCategory(categoryObj);
+        }
+
+        categories = Service.GetCategories();
+    }
+}
